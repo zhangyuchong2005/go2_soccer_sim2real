@@ -171,7 +171,8 @@ See `deploy/policy/go2/soccer_kick/config.yaml`:
 |------|--------|-------------|
 | `control_policy.pt` | PPO | Low-level toe trajectory tracker |
 | `planner_policy.pt` | PPO | High-level Bezier planner |
-| `go2_bc_swing_visible.pt` | BC | Behavioral cloning — visible swing (latest) |
+| `go2_bc_swing_visible.pt` | BC | Behavioral cloning — visible swing |
+| `go2_bc_large_backswing.pt` | BC | Behavioral cloning — large backswing (latest) |
 | `go2_control_policy.pt` | PPO | Go2 RL control policy |
 | `go2_control_policy_v3.pt` | PPO | Go2 RL control policy v3 |
 

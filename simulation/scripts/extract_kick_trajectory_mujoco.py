@@ -47,12 +47,14 @@ def smoothstep(x: float) -> float:
 
 
 def apply_ordered_swing(target_q: np.ndarray, phase: float) -> np.ndarray:
-    """Same as IsaacLab script — apply FR leg ordered swing guard."""
+    """Same as IsaacLab script — apply FR leg ordered swing guard.
+    Keyframes match expert_action() in mujoco_go2.py.
+    """
     DEFAULT_Q = np.array([0.0, 0.65, -1.45, 0.0, 0.9, -1.8, 0.0, 0.65, -1.45, 0.0, 0.65, -1.45], dtype=np.float32)
     start = DEFAULT_Q[3:6]
-    backswing = np.array([0.00, 1.60, -2.65], dtype=np.float32)
-    strike = np.array([-0.12, -0.38, -1.22], dtype=np.float32)
-    follow = np.array([-0.16, -0.55, -1.15], dtype=np.float32)
+    backswing = np.array([0.00, 1.00, -1.80], dtype=np.float32)
+    strike = np.array([-0.20, -0.95, 0.38], dtype=np.float32)
+    follow = np.array([-0.25, -1.00, 0.55], dtype=np.float32)
     if phase < 0.30:
         u = smoothstep(phase / 0.30)
         swing_q = (1.0 - u) * start + u * backswing
@@ -95,7 +97,7 @@ def main():
         phase = min(1.0, step * 4.0 / max(1, HORIZON - 1))
         target_q = apply_ordered_swing(target_q, phase)
 
-        # center-hit-lift
+        # Apply center-hit-lift (calf retraction during close-ball contact)
         if phase <= 0.58:
             lift_in = smoothstep(phase / 0.08)
             lift_out = 1.0 - smoothstep((phase - 0.46) / 0.12)
@@ -117,6 +119,9 @@ def main():
         env.data.qvel[:6] = 0.0
         env.mujoco.mj_forward(env.model, env.data)
         obs = env._obs()
+        # Note: policy was trained with pinned base. Float base observations
+        # differ from training distribution — the policy may behave poorly.
+        # Use --pin-base on play_go2_policy.py for consistent results.
 
         if (step + 1) % 30 == 0:
             print(f"  step={step + 1}/{HORIZON}")

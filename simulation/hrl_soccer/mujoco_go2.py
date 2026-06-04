@@ -117,8 +117,8 @@ class Go2BezierKickEnv:
         back = np.array([-aim_dir[0], -aim_dir[1], 0.0], dtype=np.float32)
         impact = np.array([ball[0], ball[1], 0.105], dtype=np.float32) + 0.12 * back
         follow = np.array([ball[0], ball[1], 0.115], dtype=np.float32) + 0.18 * np.r_[aim_dir, 0.0].astype(np.float32)
-        lift = self.start_toe + np.array([0.06, -0.02, 0.16], dtype=np.float32)
-        prep = impact + np.array([-0.16 * aim_dir[0], -0.16 * aim_dir[1], 0.10], dtype=np.float32)
+        lift = self.start_toe + np.array([0.08, -0.03, 0.24], dtype=np.float32)
+        prep = impact + np.array([-0.20 * aim_dir[0], -0.20 * aim_dir[1], 0.14], dtype=np.float32)
         if t < 0.25:
             u = t / 0.25
             return (1.0 - u) * self.start_toe + u * lift
@@ -151,14 +151,12 @@ class Go2BezierKickEnv:
         phase = self.step_count / max(1, self.horizon - 1)
         action = np.zeros(12, dtype=np.float32)
         # FR leg swing primitive in normalized action space:
-        # lift foot, swing back above the ground, sweep forward through the ball,
-        # then recover. This is deliberately more "kicking" than the earlier
-        # ground-push expert.
-        # Positive FR thigh action rotates the leg backward first. The strike
-        # phase then reverses the thigh direction and sweeps forward through the
-        # ball center line.
-        lift = np.array([0.00, 0.35, -0.90], dtype=np.float32)
-        backswing = np.array([0.00, 0.60, -1.00], dtype=np.float32)
+        # 1. Lift: raise FR leg high with backswing preparation
+        # 2. Backswing: swing leg far backward above the ball
+        # 3. Strike: sweep forward through the ball center line
+        # 4. Follow-through: continue forward then recover
+        lift = np.array([0.00, 0.65, -1.60], dtype=np.float32)
+        backswing = np.array([0.00, 1.00, -1.80], dtype=np.float32)
         strike = np.array([-0.20, -0.95, 0.38], dtype=np.float32)
         follow = np.array([-0.25, -1.00, 0.55], dtype=np.float32)
         if phase < 0.24:

@@ -1,8 +1,13 @@
 # Go2 Soccer Kick - Open-loop Keyframe Animation
-# Extracted from go2_bc_swing_visible.pt policy via MuJoCo sim
+# Extracted from go2_bc_large_backswing.pt policy via MuJoCo sim
 # Source: /home/yczhang/hrl_soccer_shooting/docs/kick_trajectory.json
 #
-# Keyframes extracted from policy trajectory (not hand-tuned)
+# Training: BC (Behavioral Cloning) from expert action with large backswing
+# - lift: [0.00, 0.65, -1.60]  (high leg lift)
+# - backswing: [0.00, 1.00, -1.80]  (large backward swing)
+# - strike: [-0.20, -0.95, 0.38]  (forward strike through ball)
+# - follow: [-0.25, -1.00, 0.55]  (follow-through)
+#
 # Safety: start with safety_scale=0.5 for first test
 
 soccer_kick:
@@ -20,11 +25,11 @@ soccer_kick:
   kick_kd: 5.0
 
   # FR Leg Keyframes (SDK order: FR_hip, FR_thigh, FR_calf)
-  # Extracted from swing_visible.pt policy trajectory
+  # Extracted from large_backswing policy trajectory
   fr_hip_locked: true
-  fr_backswing: [0.00, 1.60, -2.85]
-  fr_strike:   [-0.10, -0.04, -1.63]
-  fr_follow:   [-0.16, -0.55, -1.15]
+  fr_backswing: [0.00, 1.00, -2.00]
+  fr_strike:   [-0.17, -0.62, -0.16]
+  fr_follow:   [-0.25, -1.00, 0.55]
 
   # Phase boundaries
   phase_boundaries: [0.35, 0.65, 0.80]
