@@ -1,6 +1,8 @@
 # Sim2Real Deployment — rl_sar SoccerKick
 
-This directory contains the modified rl_sar FSM state for deploying the Go2 soccer kick on real hardware.
+This directory contains everything needed to deploy the Go2 soccer kick on real hardware.
+
+> **Note**: `rl_sar` is a third-party project ([Leoheng22/rl_sar](https://github.com/Leoheng22/rl_sar)). This repo only contains our **modifications** (FSM state) and **config files**, not the full rl_sar source code.
 
 ## Files
 
@@ -8,6 +10,8 @@ This directory contains the modified rl_sar FSM state for deploying the Go2 socc
 |------|-------------|
 | `rl_sar/fsm_robot/fsm_go2.hpp` | Modified Go2 FSM with `RLFSMStateSoccerKick` state |
 | `policy/go2/soccer_kick/config.yaml` | Soccer kick keyframe parameters (extracted from simulation) |
+| `install_soccer_kick_to_rl_sar.sh` | Install script — copies config + builds rl_real_go2 |
+| `sim2real_with_rl_sar.md` | Full deployment guide with safety guide and tuning |
 
 ## SoccerKick FSM State
 
@@ -36,10 +40,51 @@ These were extracted from the `go2_bc_swing_visible.pt` policy running in MuJoCo
 - **safety_scale**: Scales deviation from standing pose. Start at 0.5, increase gradually.
 - **fr_hip_locked**: Keeps FR hip at standing angle to prevent lateral sweep.
 
-### Integration Steps
+## Quick Start
 
-1. Replace `fsm_go2.hpp` in your rl_sar repo
-2. Copy `config.yaml` to `rl_sar/policy/go2/soccer_kick/`
-3. Rebuild `rl_real_go2`
-4. Connect to Go2 via ethernet
-5. Run `./cmake_build/bin/rl_real_go2 <interface>`
+### 1. Clone rl_sar
+
+```bash
+git clone https://github.com/Leoheng22/rl_sar.git
+cd rl_sar
+```
+
+### 2. Apply our modifications
+
+```bash
+# Option A: Use install script
+bash /path/to/go2_soccer_sim2real/deploy/install_soccer_kick_to_rl_sar.sh
+
+# Option B: Manual
+cp /path/to/go2_soccer_sim2real/deploy/rl_sar/fsm_robot/fsm_go2.hpp src/rl_sar/fsm_robot/
+cp /path/to/go2_soccer_sim2real/deploy/policy/go2/soccer_kick/config.yaml policy/go2/soccer_kick/
+```
+
+### 3. Build rl_real_go2
+
+```bash
+cmake src/rl_sar/ -B cmake_build -DUSE_CMAKE=ON
+cmake --build cmake_build --target rl_real_go2 -j4
+```
+
+### 4. Run
+
+```bash
+./cmake_build/bin/rl_real_go2 enp4s0   # replace with your network interface
+```
+
+| Key | Action |
+|-----|--------|
+| `0` | GetUp (stand up) |
+| `2` | **SoccerKick** (after standing) |
+| `P` | Emergency Passive |
+| `1` | RL Locomotion |
+| `9` | GetDown |
+
+### 5. Safety
+
+1. **Start with `safety_scale: 0.5`** in `config.yaml`
+2. Test on flat ground, clear space in front of FR leg
+3. Press `P` immediately if robot leans or behaves unexpectedly
+
+See `sim2real_with_rl_sar.md` for the full safety guide and tuning instructions.
