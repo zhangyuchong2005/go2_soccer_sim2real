@@ -1,0 +1,30 @@
+# Go2 Soccer Kick - Open-loop Keyframe Animation
+# Extracted from go2_bc_swing_visible.pt policy via MuJoCo sim
+# Source: /home/yczhang/hrl_soccer_shooting/docs/kick_trajectory.json
+#
+# Keyframes extracted from policy trajectory (not hand-tuned)
+# Safety: start with safety_scale=0.5 for first test
+
+soccer_kick:
+  # Timing
+  kick_duration: 1.00
+  auto_return_time: 1.15
+
+  # Safety
+  safety_scale: 0.5
+  roll_threshold: 30.0
+  pitch_threshold: 30.0
+
+  # PD Gains
+  kick_kp: 45.0
+  kick_kd: 5.0
+
+  # FR Leg Keyframes (SDK order: FR_hip, FR_thigh, FR_calf)
+  # Extracted from swing_visible.pt policy trajectory
+  fr_hip_locked: true
+  fr_backswing: [0.00, 1.60, -2.85]
+  fr_strike:   [-0.10, -0.04, -1.63]
+  fr_follow:   [-0.16, -0.55, -1.15]
+
+  # Phase boundaries
+  phase_boundaries: [0.35, 0.65, 0.80]

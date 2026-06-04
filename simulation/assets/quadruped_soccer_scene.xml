@@ -1,0 +1,60 @@
+<mujoco model="quadruped_soccer_scene">
+  <compiler angle="radian"/>
+  <option timestep="0.002" gravity="0 0 -9.81"/>
+  <default>
+    <joint damping="0.5" armature="0.01"/>
+    <geom friction="0.9 0.02 0.001" solref="0.01 1"/>
+    <motor ctrllimited="true" ctrlrange="-1 1"/>
+  </default>
+  <asset>
+    <texture name="grid" type="2d" builtin="checker" rgb1="0.25 0.31 0.25" rgb2="0.18 0.22 0.18" width="256" height="256"/>
+    <material name="ground" texture="grid" texrepeat="8 8"/>
+    <material name="body" rgba="0.15 0.17 0.19 1"/>
+    <material name="leg" rgba="0.45 0.47 0.50 1"/>
+    <material name="ballmat" rgba="0.95 0.72 0.10 1"/>
+    <material name="goalmat" rgba="0.1 0.5 0.95 0.35"/>
+  </asset>
+  <worldbody>
+    <light pos="0 0 4"/>
+    <geom name="floor" type="plane" size="5 5 0.05" material="ground"/>
+    <geom name="goal" type="cylinder" pos="2.4 0 0.01" size="0.2 0.01" material="goalmat" contype="0" conaffinity="0"/>
+    <body name="base" pos="0 0 0.36">
+      <freejoint/>
+      <geom type="box" size="0.25 0.10 0.055" material="body" mass="5"/>
+      <body name="fr_hip" pos="0.18 -0.10 0">
+        <joint name="fr_hip" axis="1 0 0" range="-0.8 0.8"/>
+        <geom type="capsule" fromto="0 0 0 0 -0.04 -0.13" size="0.025" material="leg"/>
+        <body name="fr_thigh" pos="0 -0.04 -0.13">
+          <joint name="fr_thigh" axis="0 1 0" range="-1.8 1.8"/>
+          <geom type="capsule" fromto="0 0 0 0.03 0 -0.17" size="0.022" material="leg"/>
+          <body name="fr_calf" pos="0.03 0 -0.17">
+            <joint name="fr_calf" axis="0 1 0" range="-2.7 -0.2"/>
+            <geom type="capsule" fromto="0 0 0 0.08 0 -0.18" size="0.019" material="leg"/>
+            <geom name="fr_toe" type="sphere" pos="0.08 0 -0.18" size="0.032" material="leg"/>
+          </body>
+        </body>
+      </body>
+      <body name="fl_leg" pos="0.18 0.10 0">
+        <geom type="capsule" fromto="0 0 0 0 0 -0.34" size="0.024" material="leg"/>
+        <geom type="sphere" pos="0 0 -0.34" size="0.032" material="leg"/>
+      </body>
+      <body name="rr_leg" pos="-0.18 -0.10 0">
+        <geom type="capsule" fromto="0 0 0 0 0 -0.34" size="0.024" material="leg"/>
+        <geom type="sphere" pos="0 0 -0.34" size="0.032" material="leg"/>
+      </body>
+      <body name="rl_leg" pos="-0.18 0.10 0">
+        <geom type="capsule" fromto="0 0 0 0 0 -0.34" size="0.024" material="leg"/>
+        <geom type="sphere" pos="0 0 -0.34" size="0.032" material="leg"/>
+      </body>
+    </body>
+    <body name="ball" pos="0.55 0 0.105">
+      <freejoint/>
+      <geom name="ball_geom" type="sphere" size="0.105" mass="0.43" material="ballmat" friction="0.85 0.04 0.002"/>
+    </body>
+  </worldbody>
+  <actuator>
+    <motor name="fr_hip_motor" joint="fr_hip" gear="25"/>
+    <motor name="fr_thigh_motor" joint="fr_thigh" gear="25"/>
+    <motor name="fr_calf_motor" joint="fr_calf" gear="25"/>
+  </actuator>
+</mujoco>
