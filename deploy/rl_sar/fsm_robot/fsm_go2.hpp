@@ -324,8 +324,9 @@ public:
         fr_follow    = rl.params.Get<std::vector<float>>("fr_follow",    {0.0f, -0.34f, -1.95f});
         phase_boundaries = rl.params.Get<std::vector<float>>("phase_boundaries", {0.35f, 0.65f, 0.80f});
 
-        // Capture current standing pose
-        standing_pose = rl.now_state.motor_state.q;
+        // Capture current standing pose from real-time motor states
+        // (fsm_state points to the current robot state, updated every step)
+        standing_pose = fsm_state->motor_state.q;
 
         std::cout << LOGGER::INFO << "SoccerKick started: duration=" << kick_duration
                   << "s safety_scale=" << safety_scale << std::endl;
